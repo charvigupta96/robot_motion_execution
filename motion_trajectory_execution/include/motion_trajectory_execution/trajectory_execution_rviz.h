@@ -42,6 +42,13 @@ class MotionCommanderRVIZ
     MotionCommanderRVIZ(string robot_description_name, string robot_ns, string planning_group, string planning_scene);
     ~MotionCommanderRVIZ();
 
+    //Execute Trajectory
+    virtual bool execute(const string planner_type, const string run_id);
+
+
+    //Load Joint Trajectory from file and execute it
+    virtual void executeJointTrajectory(char *joint_trajectory_file);
+
     //Load Joint Trajectory from file and execute it
     virtual void executeJointTrajectory(char *joint_trajectory_file, char* ee_trajectory_file);
 
@@ -65,6 +72,9 @@ class MotionCommanderRVIZ
 
     //Execute planned trajectory
     virtual void execute_trajectory();
+
+    //Reset planner data
+    void reset_data();
     
     private:
 
@@ -84,13 +94,15 @@ class MotionCommanderRVIZ
     string m_planning_scene_name;
 
     //Generate KDL tree from Kuka urdf
-    boost::shared_ptr<kuka_motion_controller::KDLRobotModel> m_KDLManipulatorModel;
+    boost::shared_ptr<kuka_motion_controller::KDLRobotModel> m_KDLRobotModel;
 
     //Joint Names
     vector<string> m_joint_names;
 
     //Number of joints
     int m_num_joints;
+    int m_num_joints_revolute;
+    int m_num_joints_prismatic;
     
     //Visualization of Motion in Planning Scene
     //boost::shared_ptr<planning_scene_monitor::PlanningSceneMonitor> psm_;

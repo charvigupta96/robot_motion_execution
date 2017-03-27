@@ -48,8 +48,12 @@ int main(int argc, char** argv)
 
 
     //Read package path for planner from parameter server
+    //string planner_package_path;
+    //nh.param("planner_package_path", planner_package_path, std::string("/home/burgetf/catkin_ws/src/manipulator_motion_control/rrt_star_algorithm"));
+
+    //Get package path of "planner_statistics"
     string planner_package_path;
-    nh.param("planner_package_path", planner_package_path, std::string("/home/burgetf/catkin_ws/src/manipulator_motion_control/rrt_star_algorithm"));
+    planner_package_path = ros::package::getPath("planner_statistics");
 
 
     //Set path to the file that will store the planned joint trajectory

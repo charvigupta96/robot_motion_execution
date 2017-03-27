@@ -1,0 +1,16 @@
+
+#Linear and angular velocity limit for base motion
+linear_vel_limit: 0.4
+angular_vel_limit: 0.5
+    
+#Linear and angular velocity gain for base motion
+linear_vel_base_gain: 0.6
+angular_vel_base_gain: 0.6
+
+#Error treshold triggering motion towards next waypoint (used for mobile base trajectory execution)
+error_thr_trans: 0.3
+error_thr_rot: 0.3
+
+#Trajectory sampling step width for base motion
+traj_sampling_step: 0.1
+    

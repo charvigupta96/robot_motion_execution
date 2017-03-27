@@ -1,0 +1,10 @@
+#Type of planner (uni or bidirectional)
+string planner_type
+
+#ID of the planner run
+string run_id
+
+---
+
+#Flag indicating whether trajectory execution has been successfull
+bool execution_success

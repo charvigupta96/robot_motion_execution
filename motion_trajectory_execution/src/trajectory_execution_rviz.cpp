@@ -15,11 +15,11 @@ MotionCommanderRVIZ::MotionCommanderRVIZ()
 MotionCommanderRVIZ::MotionCommanderRVIZ(string planning_group)
 {
     //Get namespaces of robot
-    m_nh.param("ns_omnirob_robot", m_ns_prefix_robot, std::string(""));
+    m_nh.param("ns_prefix_robot", m_ns_prefix_robot, std::string(""));
 
     //Get name of robot_description parameter
     string robot_description_robot;
-    m_nh.param("robot_description_omnirob_robot", robot_description_robot, std::string("robot_description"));
+    m_nh.param("robot_description_robot", robot_description_robot, std::string("robot_description"));
 
 
     //Check the planning frame (from virtual joint in srdf)
@@ -39,13 +39,15 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string planning_group)
     m_planning_group = planning_group;
 
     //Create Robot model
-    m_KDLManipulatorModel = boost::shared_ptr<kuka_motion_controller::KDLRobotModel>(new kuka_motion_controller::KDLRobotModel(robot_description_robot, m_ns_prefix_robot+"planning_scene", m_ns_prefix_robot+"endeffector_trajectory", planning_group));
+    m_KDLRobotModel = boost::shared_ptr<kuka_motion_controller::KDLRobotModel>(new kuka_motion_controller::KDLRobotModel(robot_description_robot, m_ns_prefix_robot+"planning_scene", m_ns_prefix_robot+"endeffector_trajectory", planning_group));
 
     //Get Joint Names for Robot
-    m_joint_names = m_KDLManipulatorModel->getJointNames();
+    m_joint_names = m_KDLRobotModel->getJointNames();
 
     //Get number of Joints
-    m_num_joints = m_KDLManipulatorModel->getNumJoints();
+    m_num_joints = m_KDLRobotModel->getNumJoints();
+    m_num_joints_revolute = m_KDLRobotModel->getNumRevoluteJoints();
+    m_num_joints_prismatic = m_KDLRobotModel->getNumPrismaticJoints();
 
     //Create planning scene monitor
     //psm_ = boost::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>(new planning_scene_monitor::PlanningSceneMonitor("robot_description"));
@@ -79,11 +81,11 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string planning_group, string planning_
     m_planning_group = planning_group;
 
     //Get namespaces of robot
-    m_nh.param("ns_omnirob_robot", m_ns_prefix_robot, std::string(""));
+    m_nh.param("ns_prefix_robot", m_ns_prefix_robot, std::string(""));
 
     //Get name of robot_description parameter
     string robot_description_robot;
-    m_nh.param("robot_description_omnirob_robot", robot_description_robot, std::string("robot_description"));
+    m_nh.param("robot_description_robot", robot_description_robot, std::string("robot_description"));
 
     //Check the planning frame (from virtual joint in srdf)
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description_robot);
@@ -94,13 +96,15 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string planning_group, string planning_
     m_planning_frame =  "/" + virtual_joint[0].parent_frame_;
 
     //Create Robot model
-    m_KDLManipulatorModel = boost::shared_ptr<kuka_motion_controller::KDLRobotModel>(new kuka_motion_controller::KDLRobotModel(robot_description_robot, m_ns_prefix_robot+"planning_scene", m_ns_prefix_robot+"endeffector_trajectory", planning_group));
+    m_KDLRobotModel = boost::shared_ptr<kuka_motion_controller::KDLRobotModel>(new kuka_motion_controller::KDLRobotModel(robot_description_robot, m_ns_prefix_robot+"planning_scene", m_ns_prefix_robot+"endeffector_trajectory", planning_group));
 
     //Get Joint Names for Robot
-    m_joint_names = m_KDLManipulatorModel->getJointNames();
+    m_joint_names = m_KDLRobotModel->getJointNames();
 
     //Get number of Joints
-    m_num_joints = m_KDLManipulatorModel->getNumJoints();
+    m_num_joints = m_KDLRobotModel->getNumJoints();
+    m_num_joints_revolute = m_KDLRobotModel->getNumRevoluteJoints();
+    m_num_joints_prismatic = m_KDLRobotModel->getNumPrismaticJoints();
 
     //Create planning scene monitor
     //psm_ = boost::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>(new planning_scene_monitor::PlanningSceneMonitor("robot_description"));
@@ -120,9 +124,6 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string planning_group, string planning_
 
     //Get Planning Environment Size
     m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(robot_description_robot, planning_group));
-
-    //Store Planning Scene Name
-    m_planning_scene_name = "none";
 
     //Set the Planning Scene in the Planning World
     setPlanningScene(planning_scene);
@@ -156,13 +157,15 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string robot_description_name, string r
     m_planning_frame =  "/" + virtual_joint[0].parent_frame_;
 
     //Create Robot model
-    m_KDLManipulatorModel = boost::shared_ptr<kuka_motion_controller::KDLRobotModel>(new kuka_motion_controller::KDLRobotModel(robot_description_name, planning_scene_topic_rob, endeffector_trajectory_topic_rob, planning_group));
+    m_KDLRobotModel = boost::shared_ptr<kuka_motion_controller::KDLRobotModel>(new kuka_motion_controller::KDLRobotModel(robot_description_name, planning_scene_topic_rob, endeffector_trajectory_topic_rob, planning_group));
 
     //Get Joint Names for Robot
-    m_joint_names = m_KDLManipulatorModel->getJointNames();
+    m_joint_names = m_KDLRobotModel->getJointNames();
 
     //Get number of Joints
-    m_num_joints = m_KDLManipulatorModel->getNumJoints();
+    m_num_joints = m_KDLRobotModel->getNumJoints();
+    m_num_joints_revolute = m_KDLRobotModel->getNumRevoluteJoints();
+    m_num_joints_prismatic = m_KDLRobotModel->getNumPrismaticJoints();
 
     //Create planning scene monitor
     //psm_ = boost::shared_ptr<planning_scene_monitor::PlanningSceneMonitor>(new planning_scene_monitor::PlanningSceneMonitor("robot_description"));
@@ -183,8 +186,6 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string robot_description_name, string r
     //Get Planning Environment Size
     m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(robot_description_name, planning_group));
 
-    //Store Planning Scene Name
-    m_planning_scene_name = "none";
 
     //Set the Planning Scene in the Planning World
     setPlanningScene(planning_scene);
@@ -203,6 +204,16 @@ MotionCommanderRVIZ::~MotionCommanderRVIZ()
 }
 
 
+//Reset planner data
+void MotionCommanderRVIZ::reset_data()
+{
+    //Clear joint trajectory
+    m_joint_trajectory.clear();
+
+    //Clear ee trajectory
+    m_ee_trajectory.clear();
+}
+
 //Set the planning scene (given by input)
 void MotionCommanderRVIZ::setPlanningScene(string planning_scene)
 {
@@ -217,8 +228,12 @@ void MotionCommanderRVIZ::setPlanningScene(string planning_scene)
     //Set Planning World
 
     //Set Environment Borders
-    double env_size_x = 20.0;
-    double env_size_y = 20.0;
+    vector<double> env_size_x(2);
+    env_size_x[0] = -10.0;
+    env_size_x[1] = 10.0;
+    vector<double> env_size_y(2);
+    env_size_y[0] = -10.0;
+    env_size_y[1] = 10.0;
     double env_size_z = 2.0;
     m_planning_world->insertEnvironmentBorders(env_size_x,env_size_y,env_size_z);
 
@@ -229,8 +244,12 @@ void MotionCommanderRVIZ::setPlanningScene(string planning_scene)
     else if (m_planning_scene_name == "rack")
     {
         //Enter Environment Borders
-        double env_size_x = 10.0;
-        double env_size_y = 10.0;
+        vector<double> env_size_x(2);
+        env_size_x[0] = -5.0;
+        env_size_x[1] = 5.0;
+        vector<double> env_size_y(2);
+        env_size_y[0] = -5.0;
+        env_size_y[1] = 5.0;
         double env_size_z = 2.0;
         m_planning_world->insertEnvironmentBorders(env_size_x,env_size_y,env_size_z);
 
@@ -256,8 +275,12 @@ void MotionCommanderRVIZ::setPlanningScene(string planning_scene)
     else if (m_planning_scene_name == "door")
     {
         //Enter Environment Borders
-        double env_size_x = 10.0;
-        double env_size_y = 10.0;
+        vector<double> env_size_x(2);
+        env_size_x[0] = -5.0;
+        env_size_x[1] = 5.0;
+        vector<double> env_size_y(2);
+        env_size_y[0] = -5.0;
+        env_size_y[1] = 5.0;
         double env_size_z = 2.0;
         m_planning_world->insertEnvironmentBorders(env_size_x,env_size_y,env_size_z);
 
@@ -366,8 +389,10 @@ void MotionCommanderRVIZ::setPlanningScene(string planning_scene)
     {
 
     }
-    else
-       ROS_ERROR("Planning World no known!");
+    else if(m_planning_scene_name == "none")
+    {
+       //ROS_ERROR("Planning World no known!");
+    }
 }
 
 
@@ -576,6 +601,47 @@ vector< vector<double> > MotionCommanderRVIZ::getEETrajectory()
 }
 
 
+//Execute Trajectory
+bool MotionCommanderRVIZ::execute(const string planner_type, const string run_id)
+{
+    //Read package path for planner output
+    string trajectory_package_path = ros::package::getPath("planner_statistics");
+
+    //Set path to the file that will store the planned joint trajectory
+    string folder_path = trajectory_package_path + "/data/" + planner_type + "/motion_plan_joint_trajectory_run_" + run_id + ".txt";
+    char *file_path_joint_trajectory = new char[folder_path.size() + 1];
+    copy(folder_path.begin(), folder_path.end(), file_path_joint_trajectory);
+    file_path_joint_trajectory[folder_path.size()] = '\0'; // don't forget the terminating 0
+    //cout<<file_path_joint_trajectory<<endl;
+
+    //Execute joint trajectory from file
+    executeJointTrajectory(file_path_joint_trajectory);
+    //executeJointTrajectory(file_path_joint_trajectory,true); //with elastic band
+
+    cout<<"Finished trajectory execution"<<endl;
+
+    //Reset data stored in trajectory vector
+    reset_data();
+
+    return true;
+}
+
+
+//Load Joint Trajectory from file and execute it
+void MotionCommanderRVIZ::executeJointTrajectory(char* joint_trajectory_file)
+{
+
+    //------------- Get Trajectories from file -----------------------
+
+    //Get Joint Trajecotry data
+    loadJointTrajectory(joint_trajectory_file);
+
+    //------------- Execute Trajectory -----------------------
+
+    execute_trajectory();
+
+}
+
 //Load Joint Trajectory from file and execute it
 void MotionCommanderRVIZ::executeJointTrajectory(char* joint_trajectory_file, char *ee_trajectory_file)
 {
@@ -594,6 +660,7 @@ void MotionCommanderRVIZ::executeJointTrajectory(char* joint_trajectory_file, ch
 
 
 }
+
 
 
 //Execute Joint Trajectory given as input
@@ -617,6 +684,7 @@ void MotionCommanderRVIZ::executeJointTrajectory(vector< vector<double> > joint_
 void MotionCommanderRVIZ::execute_trajectory()
 {
     //------------- Convert Path from planner into Joint Trajectory -----------------------
+
     // -> from Paper: "Time-Optimal Trajectory Generation for Path Following with Bounded Acceleration and Velocity"
 
     //Convert Trajectory into waypoints list
@@ -633,47 +701,63 @@ void MotionCommanderRVIZ::execute_trajectory()
 
     //Set Velocity and Acceleration Bounds
     Eigen::VectorXd maxAcceleration;
-    Eigen::VectorXd maxVelocity;
-    if (m_planning_group == "kuka_complete_arm")
+    Eigen::VectorXd maxVelocity;    
+    maxAcceleration.resize(m_num_joints);
+    maxVelocity.resize(m_num_joints);
+
+    for(int base_joint = 0 ; base_joint < m_num_joints_prismatic; base_joint++)
     {
-        maxAcceleration.resize(7);
-        maxVelocity.resize(7);
-        maxAcceleration << 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5;
-        maxVelocity << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
+         maxAcceleration[base_joint] = 0.2;
+         maxVelocity[base_joint] = 0.5;
     }
-    else if(m_planning_group == "omnirob_base" || m_planning_group == "pr2_base")
+
+    for(int rot_joint = 0 ; rot_joint < m_num_joints_revolute; rot_joint++)
     {
-        maxAcceleration.resize(3);
-        maxVelocity.resize(3);
-        //maxAcceleration << 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5 ;
-        maxAcceleration << 1.0, 1.0, 0.8;
-        maxVelocity << 1.0, 1.0, 1.0;
+         maxAcceleration[m_num_joints_prismatic+rot_joint] = 0.2;
+         maxVelocity[m_num_joints_prismatic+rot_joint] = 0.5;
     }
-    else if(m_planning_group == "pr2_base_arm")
-    {
-        maxAcceleration.resize(13);
-        maxVelocity.resize(13);
-        //maxAcceleration << 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5 ;
-        maxAcceleration << 1.0, 1.0, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8 ;
-        maxVelocity << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
-    }
-    else if(m_planning_group == "omnirob_lbr_sdh")
-    {
-        maxAcceleration.resize(10);
-        maxVelocity.resize(10);
-        //maxAcceleration << 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5 ;
-        maxAcceleration << 1.0, 1.0, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8 ;
-        maxVelocity << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
-    }
-    else if(m_planning_group == "robotino_robot")
-    {
-        maxAcceleration.resize(8);
-        maxVelocity.resize(8);
-        maxAcceleration << 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5;
-        maxVelocity << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
-    }
-    else
-        ROS_ERROR("Unknown Planning Group");
+
+
+//    if (m_planning_group == "kuka_complete_arm")
+//    {
+//        maxAcceleration.resize(7);
+//        maxVelocity.resize(7);
+//        maxAcceleration << 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5;
+//        maxVelocity << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
+//    }
+//    else if(m_planning_group == "omnirob_base" || m_planning_group == "pr2_base")
+//    {
+//        maxAcceleration.resize(3);
+//        maxVelocity.resize(3);
+//        //maxAcceleration << 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5 ;
+//        maxAcceleration << 1.0, 1.0, 0.8;
+//        maxVelocity << 1.0, 1.0, 1.0;
+//    }
+//    else if(m_planning_group == "pr2_base_arm")
+//    {
+//        maxAcceleration.resize(13);
+//        maxVelocity.resize(13);
+//        //maxAcceleration << 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5 ;
+//        maxAcceleration << 1.0, 1.0, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8 ;
+//        maxVelocity << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
+//    }
+//    else if(m_planning_group == "omnirob_lbr_sdh")
+//    {
+//        maxAcceleration.resize(10);
+//        maxVelocity.resize(10);
+//        //maxAcceleration << 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5 ;
+//        maxAcceleration << 1.0, 1.0, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8 ;
+//        maxVelocity << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
+//    }
+//    else if(m_planning_group == "robotino_robot")
+//    {
+//        maxAcceleration.resize(8);
+//        maxVelocity.resize(8);
+//        maxAcceleration << 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5;
+//        maxVelocity << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
+//    }
+//    else
+//        ROS_ERROR("Unknown Planning Group");
 
 
     //Set maximum permitted path deviation for trajectory generation algorithm
@@ -702,17 +786,9 @@ void MotionCommanderRVIZ::execute_trajectory()
     }
 
 
-    //------------- Convert generated Trajectory into MoveIt Trajectory Message -----------------------
-
-    //Moveit Trajectory Message
-    moveit_msgs::DisplayTrajectory trajectory_rviz;
 
 
-    //Set trajectory sampling step width
-    double sampling_step = 0.1;
-
-
-    //+++++++++ Start: Testing Object Attachement +++++++++
+    //---------------------------- Create Object Attachements --------------------------------
 
     //TODO:
     //  -> Get Attached Object information from planner or file
@@ -774,21 +850,27 @@ void MotionCommanderRVIZ::execute_trajectory()
     }
     else
     {
-        //        obj_pos[0] = 8.0;   //x pos
-        //        obj_pos[1] = -3.5;  //y pos
-        //        obj_pos[2] = 0.0;   //z pos
-        //        obj_dim[0] = 0.4;   //x-width dim
-        //        obj_dim[1] = 0.5;   //y-length dim
-        //        obj_dim[2] = 0.7;   //z-height dim
-        //        attached_object = m_planning_world->insertManipulableCart("cart", obj_pos, obj_dim);
-        //        attached_object_modified = m_planning_world->attachObjecttoEndeffector(attached_object,m_ee_trajectory[0]);
+                obj_pos[0] = 8.0;   //x pos
+                obj_pos[1] = -3.5;  //y pos
+                obj_pos[2] = 0.0;   //z pos
+                obj_dim[0] = 0.4;   //x-width dim
+                obj_dim[1] = 0.5;   //y-length dim
+                obj_dim[2] = 0.7;   //z-height dim
+                attached_object = m_planning_world->insertManipulableCart("cart", obj_pos, obj_dim);
+                attached_object_modified = m_planning_world->attachObjecttoEndeffector(attached_object,m_ee_trajectory[0]);
 
     }
 
 
 
+    //------------- Convert generated Trajectory into MoveIt Trajectory Message -----------------------
 
-    //+++++++++ End: Testing Object Attachement +++++++++
+    //Moveit Trajectory Message
+    moveit_msgs::DisplayTrajectory trajectory_rviz;
+
+
+    //Set trajectory sampling step width
+    double sampling_step = 0.1;
 
 
 
@@ -839,7 +921,7 @@ void MotionCommanderRVIZ::execute_trajectory()
         }
 
 
-        //++++++++++ START: TESTING Convert start config in map frame ++++++++++
+        //-------------- Convert start state in map frame
 
         //Get current pose of robot in the map frame
         tf::TransformListener listener;
@@ -931,11 +1013,8 @@ void MotionCommanderRVIZ::execute_trajectory()
             }
         }
 
-        //++++++++++ END: TESTING Convert start config in map frame ++++++++++
 
-
-
-        //+++++++++ Start: Testing Object Attachement +++++++++
+        //-------------- Start: Testing Object Attachement
 
         if(m_planning_scene_name != "empty" && m_planning_scene_name != "block" && m_planning_scene_name != "rack" && m_planning_group == "omnirob_lbr_sdh")
         {
@@ -943,12 +1022,8 @@ void MotionCommanderRVIZ::execute_trajectory()
             start_state.attached_collision_objects.push_back(attached_object_modified);
         }
 
-        //+++++++++ End: Testing Object Attachement +++++++++
 
-
-
-
-        //+++++++++++ Joint Trajectory +++++++++
+        //-------------- Start: Robot Joint Trajectory
 
         // The representation of the path contains position values for all the joints that are moving along the path; a sequence of trajectories may be specified
         moveit_msgs::RobotTrajectory robot_trajectory_local;
@@ -1021,7 +1096,8 @@ void MotionCommanderRVIZ::execute_trajectory()
             curr_point_idx++;
         }
 
-        //++++++++++ START: TESTING Convert trajectory in map frame ++++++++++
+
+        //-------------- Convert trajectory in map frame
 
         if(m_planning_group == "omnirob_lbr_sdh" || m_planning_group == "omnirob_base")
         {
@@ -1108,7 +1184,10 @@ void MotionCommanderRVIZ::execute_trajectory()
         else
             ROS_ERROR("Unknown Planning Group");
 
-        trajectory_rviz.trajectory_start = start_state;         //set robot start state
+
+
+        //Set robot start state
+        trajectory_rviz.trajectory_start = start_state;
         trajectory_rviz.trajectory.clear();
         trajectory_rviz.trajectory.push_back(robot_trajectory_local); //set robot trajectory
 

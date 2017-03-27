@@ -12,12 +12,12 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_core
   moveit_ros_planning
   moveit_ros_planning_interface
-  vrep_common
+  #vrep_common
   trajectory_planning
   planning_world_builder
   control_msgs
   tf
-  robot_interface_definition
+  #robot_interface_definition
   eband_local_planner
 )
 
@@ -102,6 +102,11 @@ catkin_package(
 ## Build ##
 ###########
 
+ADD_DEFINITIONS(
+    -std=c++11
+    -D__cplusplus=201103L #for eclipse
+)
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
@@ -115,12 +120,12 @@ set(motion_trajectory_execution_files
 
 #CPP Files
 src/trajectory_execution_rviz.cpp
-src/trajectory_execution_vrep.cpp
+#src/trajectory_execution_vrep.cpp
 src/trajectory_execution_robot.cpp
 
 #Header files (added only for visualization in QtCreator)
 include/motion_trajectory_execution/trajectory_execution_rviz.h
-include/motion_trajectory_execution/trajectory_execution_vrep.h
+#include/motion_trajectory_execution/trajectory_execution_vrep.h
 include/motion_trajectory_execution/trajectory_execution_robot.h
 
 )
@@ -139,8 +144,8 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 add_executable(motion_execution_rviz src/run_motion_execution_rviz.cpp)
 target_link_libraries(motion_execution_rviz ${PROJECT_NAME} ${catkin_LIBRARIES})
 
-add_executable(motion_execution_vrep src/run_motion_execution_vrep.cpp)
-target_link_libraries(motion_execution_vrep ${PROJECT_NAME} ${catkin_LIBRARIES})
+#add_executable(motion_execution_vrep src/run_motion_execution_vrep.cpp)
+#target_link_libraries(motion_execution_vrep ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 add_executable(motion_execution_robot src/run_motion_execution_robot.cpp)
 target_link_libraries(motion_execution_robot ${PROJECT_NAME} ${catkin_LIBRARIES})

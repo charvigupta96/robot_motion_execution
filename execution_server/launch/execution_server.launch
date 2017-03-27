@@ -1,0 +1,16 @@
+<launch>
+ 
+  <!-- Launch file arguments -->
+  <arg name="planning_group" default="omnirob_base"/>
+    
+  <!-- Load configuration file for execution -->
+  <arg name="execution_config" default="execution_config_real_omnirob"/>
+  <rosparam command="load" file="$(find execution_param_config)/execution_config/$(arg execution_config).yaml"/>
+  
+  <!-- Start Execution Server Node -->
+  <node name="execution_server" pkg="execution_server" type="execution_service_node" cwd="node" output="screen"><!--or output="screen" to print std/cout in terminal-->
+	<param name="planning_group" value="$(arg planning_group)" /> 
+  </node> 
+   
+   
+</launch>

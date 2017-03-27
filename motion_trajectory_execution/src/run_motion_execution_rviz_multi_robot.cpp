@@ -55,9 +55,12 @@ int main(int argc, char** argv)
 
 
     //Read package path for planner from parameter server
-    string planner_package_path;
-    nh.param("omnirob_group/planner_package_path", planner_package_path, std::string("/home/burgetf/catkin_ws/src/manipulator_motion_control/rrt_star_algorithm"));
+    //string planner_package_path;
+    //nh.param("omnirob_group/planner_package_path", planner_package_path, std::string("/home/burgetf/catkin_ws/src/manipulator_motion_control/rrt_star_algorithm"));
 
+    //Get package path of "planner_statistics"
+    string planner_package_path;
+    planner_package_path = ros::package::getPath("planner_statistics");
 
     //Set path to the file that stores the planned joint trajectory for robot 1
     string folder_path = planner_package_path + "/data/" + PLANNER_NAME + "/" + PLANNING_SCENE + "_scene_" + "joint_trajectory_rob_1_run_"+ PLANNING_RUN +".txt";
