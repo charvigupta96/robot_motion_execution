@@ -124,6 +124,9 @@ class MotionCommanderRVIZ
     //Set the planning scene (given by input)
     void setPlanningScene(string planning_scene);
 
+    //Get the planning frame from the SRDF description
+    string getPlanningFrameFromSRDF(string robot_desciption_param);
+
 
 
     

@@ -21,19 +21,8 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string planning_group)
     string robot_description_robot;
     m_nh.param("robot_description_robot", robot_description_robot, std::string("robot_description"));
 
-
     //Check the planning frame (from virtual joint in srdf)
-    robot_model_loader::RobotModelLoader robot_model_loader(robot_description_robot);
-    robot_model::RobotModelPtr kinematic_model = robot_model_loader.getModel();
-    //Get SRDF data for robot
-    const boost::shared_ptr< const srdf::Model > &srdf_robot = kinematic_model->getSRDF();
-    const std::vector< srdf::Model::VirtualJoint > &virtual_joint = srdf_robot->getVirtualJoints();
-    m_planning_frame =  "/" + virtual_joint[0].parent_frame_;
-
-    //Check the planning frame (from virtual joint in srdf)
-    //moveit::planning_interface::MoveGroup::Options opt(planning_group, robot_description_robot);
-    //moveit::planning_interface::MoveGroup group(opt);
-    //m_planning_frame = group.getPlanningFrame().c_str();
+    m_planning_frame =  getPlanningFrameFromSRDF(robot_description_robot);
 
     //Planning Group
     m_planning_group = planning_group;
@@ -88,12 +77,7 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string planning_group, string planning_
     m_nh.param("robot_description_robot", robot_description_robot, std::string("robot_description"));
 
     //Check the planning frame (from virtual joint in srdf)
-    robot_model_loader::RobotModelLoader robot_model_loader(robot_description_robot);
-    robot_model::RobotModelPtr kinematic_model = robot_model_loader.getModel();
-    //Get SRDF data for robot
-    const boost::shared_ptr< const srdf::Model > &srdf_robot = kinematic_model->getSRDF();
-    const std::vector< srdf::Model::VirtualJoint > &virtual_joint = srdf_robot->getVirtualJoints();
-    m_planning_frame =  "/" + virtual_joint[0].parent_frame_;
+    m_planning_frame =  getPlanningFrameFromSRDF(robot_description_robot);
 
     //Create Robot model
     m_KDLRobotModel = boost::shared_ptr<kuka_motion_controller::KDLRobotModel>(new kuka_motion_controller::KDLRobotModel(robot_description_robot, m_ns_prefix_robot+"planning_scene", m_ns_prefix_robot+"endeffector_trajectory", planning_group));
@@ -143,18 +127,11 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string robot_description_name, string r
     //Set endeffector_trajectory topic names
     string display_motion_plan_topic_rob = robot_ns + "display_motion_plan";
 
+    //Check the planning frame (from virtual joint in srdf)
+    m_planning_frame =  getPlanningFrameFromSRDF(robot_description_name);
 
     //Planning Group
     m_planning_group = planning_group;
-
-
-    //Check the planning frame (from virtual joint in srdf)
-    robot_model_loader::RobotModelLoader robot_model_loader(robot_description_name);
-    robot_model::RobotModelPtr kinematic_model = robot_model_loader.getModel();
-    //Get SRDF data for robot
-    const boost::shared_ptr< const srdf::Model > &srdf_robot = kinematic_model->getSRDF();
-    const std::vector< srdf::Model::VirtualJoint > &virtual_joint = srdf_robot->getVirtualJoints();
-    m_planning_frame =  "/" + virtual_joint[0].parent_frame_;
 
     //Create Robot model
     m_KDLRobotModel = boost::shared_ptr<kuka_motion_controller::KDLRobotModel>(new kuka_motion_controller::KDLRobotModel(robot_description_name, planning_scene_topic_rob, endeffector_trajectory_topic_rob, planning_group));
@@ -212,6 +189,56 @@ void MotionCommanderRVIZ::reset_data()
 
     //Clear ee trajectory
     m_ee_trajectory.clear();
+}
+
+
+//Get the planning frame from the SRDF description
+string MotionCommanderRVIZ::getPlanningFrameFromSRDF(string robot_desciption_param)
+{
+    //Planning frame
+    string planning_frame;
+
+    //Check the planning frame (from virtual joint in srdf)
+    boost::shared_ptr<srdf::Model> srdf_robot;
+    boost::shared_ptr<urdf::ModelInterface> urdf_robot;
+
+    //Get param content
+    std::string content;
+    if (!m_nh.getParam(robot_desciption_param, content))
+    {
+         ROS_ERROR("Robot model parameter empty '%s'?", robot_desciption_param.c_str());
+         return "none";
+    }
+
+    urdf::Model* umodel = new urdf::Model();
+    if (!umodel->initString(content))
+    {
+      ROS_ERROR("Unable to parse URDF from parameter '%s'", robot_desciption_param.c_str());
+      return "none";
+    }
+    urdf_robot.reset(umodel);
+
+    const std::string srdf_description(robot_desciption_param + "_semantic");
+    std::string scontent;
+    if (!m_nh.getParam(srdf_description, scontent))
+    {
+      ROS_ERROR("Robot semantic description not found. Did you forget to define or remap '%s'?", srdf_description.c_str());
+     return "none";
+   }
+
+    srdf_robot.reset(new srdf::Model());
+    if (!srdf_robot->initString(*urdf_robot, scontent))
+    {
+      ROS_ERROR("Unable to parse SRDF from parameter '%s'", srdf_description.c_str());
+      srdf_robot.reset();
+      return "none";
+    }
+
+    //Set planning frame class variable
+    const std::vector< srdf::Model::VirtualJoint > &virtual_joint = srdf_robot->getVirtualJoints();
+    planning_frame =  "/" + virtual_joint[0].parent_frame_;
+
+    return planning_frame;
 }
 
 //Set the planning scene (given by input)
@@ -848,7 +875,7 @@ void MotionCommanderRVIZ::execute_trajectory()
         attached_object = m_planning_world->insertManipulableCart("cart", obj_pos, obj_dim);
         attached_object_modified = m_planning_world->attachObjecttoEndeffector(attached_object,m_ee_trajectory[0]);
     }
-    else
+    else if(m_planning_scene_name == "corridor" && m_planning_group == "omnirob_lbr_sdh")
     {
                 obj_pos[0] = 8.0;   //x pos
                 obj_pos[1] = -3.5;  //y pos
@@ -860,6 +887,8 @@ void MotionCommanderRVIZ::execute_trajectory()
                 attached_object_modified = m_planning_world->attachObjecttoEndeffector(attached_object,m_ee_trajectory[0]);
 
     }
+    else
+    {}
 
 
 
@@ -940,7 +969,8 @@ void MotionCommanderRVIZ::execute_trajectory()
             }
         }
 
-        if(m_planning_group == "omnirob_lbr_sdh" || m_planning_group == "omnirob_base")
+        //If robot has a mobile base (2 prismatic and at least a revolute joint for base rotation)
+        if(m_num_joints_prismatic == 2 && m_num_joints_revolute > 0)
         {
             if(transform_map_to_base_available)
             {
@@ -1099,7 +1129,8 @@ void MotionCommanderRVIZ::execute_trajectory()
 
         //-------------- Convert trajectory in map frame
 
-        if(m_planning_group == "omnirob_lbr_sdh" || m_planning_group == "omnirob_base")
+        //If robot has a mobile base (2 prismatic and at least a revolute joint for base rotation)
+        if(m_num_joints_prismatic == 2 && m_num_joints_revolute > 0)
         {
             if(transform_map_to_base_available)
             {
