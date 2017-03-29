@@ -21,14 +21,14 @@ ExecutionControlCenter::ExecutionControlCenter(): nh_("~")
     //Read planning group name from parameter server
     nh_.param("planning_group", m_planning_group, std::string("omnirob_lbr_sdh"));
 
-    ROS_INFO_STREAM("Planning group for planning set to: " << m_planning_group);
-
     //Trajectory Execution RViz
     m_execution_rviz = boost::shared_ptr<trajectory_execution::MotionCommanderRVIZ>(new trajectory_execution::MotionCommanderRVIZ(m_planning_group));
     
     //Trajectory Execution Real Robot
     m_execution_robot = boost::shared_ptr<trajectory_execution::MotionCommanderRobot>(new trajectory_execution::MotionCommanderRobot(m_planning_group));
-    
+
+    ROS_INFO_STREAM("Trajectory execution active");
+    ROS_INFO_STREAM("Planning group for execution set to: " << m_planning_group);
 
 }
 

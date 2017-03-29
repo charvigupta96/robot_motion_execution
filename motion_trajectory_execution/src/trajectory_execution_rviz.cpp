@@ -55,7 +55,8 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string planning_group)
     m_ee_trajectory.clear();
 
     //Get Planning Environment Size
-    m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(robot_description_robot, planning_group,m_ns_prefix_robot));
+    //m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(robot_description_robot, planning_group,m_ns_prefix_robot));
+    m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(m_KDLRobotModel, m_ns_prefix_robot));
 
     //Store Planning Scene Name
     m_planning_scene_name = "none";
@@ -107,7 +108,8 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string planning_group, string planning_
     m_ee_trajectory.clear();
 
     //Get Planning Environment Size
-    m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(robot_description_robot, planning_group));
+    //m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(robot_description_robot, planning_group));
+    m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(m_KDLRobotModel, m_ns_prefix_robot));
 
     //Set the Planning Scene in the Planning World
     setPlanningScene(planning_scene);
@@ -161,8 +163,8 @@ MotionCommanderRVIZ::MotionCommanderRVIZ(string robot_description_name, string r
     m_ee_trajectory.clear();
 
     //Get Planning Environment Size
-    m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(robot_description_name, planning_group));
-
+    //m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(robot_description_name, planning_group));
+    m_planning_world = boost::shared_ptr<planning_world::PlanningWorldBuilder>(new planning_world::PlanningWorldBuilder(m_KDLRobotModel, m_ns_prefix_robot));
 
     //Set the Planning Scene in the Planning World
     setPlanningScene(planning_scene);
@@ -420,6 +422,8 @@ void MotionCommanderRVIZ::setPlanningScene(string planning_scene)
     {
        //ROS_ERROR("Planning World no known!");
     }
+    else
+    {}
 }
 
 
@@ -888,7 +892,9 @@ void MotionCommanderRVIZ::execute_trajectory()
 
     }
     else
-    {}
+    {
+
+    }
 
 
 
