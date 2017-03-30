@@ -1,11 +1,30 @@
 <launch>
  
+  <!-- +++++++++++++++++++++ ARGUMENTS +++++++++++++++++++++ -->
+ 
   <!-- Launch file arguments -->
   <arg name="planning_group" default="omnirob_base"/>
-    
+   
+  <!-- Namespace prefix of URDF,SRDF and MOVEIT and Name of robot_description parameter on parameter server-->
+  <arg name="ns_prefix_robot" 			default=""/>
+  <arg name="robot_description_robot" 	default="robot_description"/>
+  
   <!-- Load configuration file for execution -->
   <arg name="execution_config" default="execution_config_real_omnirob"/>
+  
+  
+  <!-- +++++++++++++++++++++ PARAMETERS +++++++++++++++++++++ -->
+  
+   <!-- Define Parameter storing the namespace of the omnirob robot -->
+  <param name="ns_prefix_robot" value="$(arg ns_prefix_robot)" /> <!-- e.g. /omnirob_lbr/ -->
+  <!-- Define Parameter storing the name of the robot description parameter -->
+  <param name="robot_description_robot" value="$(arg robot_description_robot)" /> <!-- e.g. /omnirob_lbr/robot_description --> 
+  
+  <!-- Load configuration file for trajectory execution -->
   <rosparam command="load" file="$(find execution_param_config)/execution_config/$(arg execution_config).yaml"/>
+  
+  
+  <!-- +++++++++++++++++++++ EXECUTION NODE +++++++++++++++++++++ -->
   
   <!-- Start Execution Server Node -->
   <node name="execution_server" pkg="execution_server" type="execution_service_node" cwd="node" output="screen"><!--or output="screen" to print std/cout in terminal-->
