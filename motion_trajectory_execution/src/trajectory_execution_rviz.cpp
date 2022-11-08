@@ -1,7 +1,7 @@
 #include <motion_trajectory_execution/trajectory_execution_rviz.h>
 #include <tf/transform_listener.h>
 
-#include <moveit/move_group_interface/move_group.h>
+#include <moveit/move_group_interface/move_group_interface.h>
 
 namespace trajectory_execution{
 
