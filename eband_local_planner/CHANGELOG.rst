@@ -2,6 +2,19 @@
 Changelog for package eband_local_planner
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.4.0 (2020-02-14)
+------------------
+* Adds Dynamic Reconfigure for planner parameters 
+* Updates library usage from tf to tf2 as necessary for Melodic
+* Release for ROS Melodic (closes `#28 <https://github.com/utexas-bwi/eband_local_planner/issues/28>`_ )
+* Contributors: Maxwell Svetlik, Yifeng Zhu
+
+0.3.1 (2017-07-02)
+------------------
+* Find Eigen3 and not Eigen to compile cleanly on Kinetic (`#21 <https://github.com/utexas-bwi/eband_local_planner/issues/21>`_)
+* For Indigo, find Eigen if Eigen3 not found (`#21 <https://github.com/utexas-bwi/eband_local_planner/issues/21>`_)
+* Contributors: Jack O'Quin
+
 0.3.0 (2015-03-31)
 ------------------
 * slow down trajectory controller while close to goal. closes `#19 <https://github.com/utexas-bwi/eband_local_planner/issues/19>`_.

@@ -2,10 +2,41 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(eband_local_planner)
 
-find_package(catkin REQUIRED 
+find_package(catkin REQUIRED
   COMPONENTS
     base_local_planner
-    cmake_modules
+    control_toolbox
+    costmap_2d
+    dynamic_reconfigure
+    geometry_msgs
+    nav_core
+    nav_msgs
+    pluginlib
+    roscpp
+    tf2_eigen
+    tf2_geometry_msgs
+    tf2_ros
+    )
+
+  find_package(Eigen3)
+  if(NOT EIGEN3_FOUND)
+    # Fallback to cmake_modules
+  find_package(cmake_modules REQUIRED)
+  find_package(Eigen REQUIRED)
+  set(Eigen3_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS})
+endif()
+
+include_directories(
+  include
+  ${Eigen3_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
+)
+
+generate_dynamic_reconfigure_options(cfg/EBandPlanner.cfg)
+
+catkin_package(
+  CATKIN_DEPENDS
+    base_local_planner
     control_toolbox
     costmap_2d
     geometry_msgs
@@ -13,52 +44,25 @@ find_package(catkin REQUIRED
     nav_msgs
     pluginlib
     roscpp
-    tf
-    tf_conversions
-)
-
-find_package(Eigen REQUIRED)
-include_directories(
-  include
-  ${Eigen_INCLUDE_DIRS}
-  ${catkin_INCLUDE_DIRS}
-)
-
-catkin_package(
-  CATKIN_DEPENDS base_local_planner control_toolbox costmap_2d geometry_msgs nav_core nav_msgs pluginlib roscpp tf tf_conversions
+    tf2_eigen
+    tf2_geometry_msgs
+    tf2_ros    
+    dynamic_reconfigure
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
+  LIBRARIES eband_local_planner
 )
-
-
-ADD_DEFINITIONS(
-    -std=c++11
-    -D__cplusplus=201103L #for eclipse
-)
-
-#Project Files
-set(eband_planner_files
-
-#CPP Files
-src/eband_local_planner_ros.cpp
-src/eband_local_planner.cpp
-src/conversions_and_types.cpp
-src/eband_visualization.cpp
-src/eband_trajectory_controller.cpp
-
-#Header files (added only for visualization in QtCreator)
-include/eband_local_planner/eband_local_planner_ros.h
-include/eband_local_planner/eband_local_planner.h
-include/eband_local_planner/conversions_and_types.h
-include/eband_local_planner/eband_visualization.h
-include/eband_local_planner/eband_trajectory_controller.h
-)
-
 
 # build the library
-add_library(${PROJECT_NAME} ${eband_planner_files})
+add_library(eband_local_planner
+  src/eband_local_planner_ros.cpp
+  src/eband_local_planner.cpp
+  src/conversions_and_types.cpp
+  src/eband_visualization.cpp
+  src/eband_trajectory_controller.cpp
+)
+add_dependencies(eband_local_planner ${eband_local_planner_EXPORTED_TARGETS})
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(eband_local_planner ${catkin_LIBRARIES})
 
 install(
   DIRECTORY include/eband_local_planner/
