@@ -1,0 +1,40 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/rathin/Documents/Fall2022/16782/planning_project/devel/include/**",
+        "/home/rathin/RA_Project/devel/include/**",
+        "/home/rathin/slam_ws/src/ws_livox/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/rathin/slam_ws/devel/include/**",
+        "/home/rathin/RA_Project/src/ar_track_alvar/ar_track_alvar/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_planning/birrt_star_algorithm/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_execution/eband_local_planner/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/eigen_stl_containers/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_execution/execution_server/include/**",
+        "/home/rathin/slam_ws/src/FAST_LIO/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_control/kuka_motion_control/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_execution/motion_trajectory_execution/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_planning/planner_data_structures/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_planning/planning_heuristics/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_planning/planning_server/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_planning/planning_world_builder/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_planning/rrt_star_algorithm/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_execution/trajectory_planning/include/**",
+        "/home/rathin/RA_Project/src/usb_cam/include/**",
+        "/home/rathin/Documents/Fall2022/16782/planning_project/src/robot_motion_planning/validity_checker/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
